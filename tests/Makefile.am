@@ -286,6 +286,7 @@ TESTSUITE_AT = \
  time01.at\
  time02.at\
  truncate.at\
+ unquote.at\
  update.at\
  update01.at\
  update02.at\

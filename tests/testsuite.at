@@ -266,6 +266,7 @@ m4_include([T-zfile.at])
 m4_include([T-nonl.at])
 m4_include([T-dir00.at])
 m4_include([T-dir01.at])
+m4_include([unquote.at])
 
 AT_BANNER([Various options])
 m4_include([indexfile.at])

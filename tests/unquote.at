@@ -1,0 +1,62 @@
+# Test suite for GNU tar.                             -*- Autotest -*-
+# Copyright 2026 Free Software Foundation, Inc.
+#
+# This file is part of GNU tar.
+#
+# GNU tar is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# GNU tar is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Octal escapes of one, two and three digits in file names given in a
+# --files-from list or as operands.  A two-digit escape such as \53
+# not followed by another octal digit was decoded as its first digit
+# alone.  A third digit that would overflow a byte, as in \400, ends
+# the escape after two digits.
+
+AT_SETUP([octal escapes in file names])
+AT_KEYWORDS([files-from unquote octal])
+
+AT_DATA([file-list],
+[a\53b
+a\53
+cA\101
+cA\1011
+e\400
+f\7g
+])
+
+AT_TAR_CHECK([
+genfile --file 'a+b'
+genfile --file 'a+'
+genfile --file 'cAA'
+genfile --file 'cAA1'
+genfile --file 'e 0'
+genfile --file "`printf 'f\007g'`"
+
+tar cvf archive -T ../file-list
+echo ==
+tar cvf archive 'a\53b' 'cA\101'
+],
+[0],
+[a+b
+a+
+cAA
+cAA1
+e 0
+f\ag
+==
+a+b
+cAA
+],
+[],[],[],[ustar]) # Testing one format is enough
+
+AT_CLEANUP
