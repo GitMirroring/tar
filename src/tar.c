@@ -299,7 +299,7 @@ subcommand_string (enum subcommand c)
       return "-c";
 
     case DELETE_SUBCOMMAND:
-      return "-D";
+      return "--delete";
 
     case DIFF_SUBCOMMAND:
       return "-d";
@@ -1048,8 +1048,8 @@ set_subcommand_option (enum subcommand subcommand)
 {
   if (subcommand_option != UNKNOWN_SUBCOMMAND
       && subcommand_option != subcommand)
-    paxusage (_("You may not specify more than one '-Acdrtux',"
-		" '--delete' or  '--test-label' option"));
+    option_conflict_error (subcommand_string (subcommand_option),
+			   subcommand_string (subcommand));
 
   subcommand_option = subcommand;
 }
@@ -2890,8 +2890,7 @@ main (int argc, char **argv)
   switch (subcommand_option)
     {
     case UNKNOWN_SUBCOMMAND:
-      paxusage (_("You must specify one of the '-Acdrtux',"
-		  " '--delete' or '--test-label' options"));
+      paxusage (_("No main option specified (e.g., '-c', '-x')"));
 
     case CAT_SUBCOMMAND:
     case UPDATE_SUBCOMMAND:
