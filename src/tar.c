@@ -1048,7 +1048,7 @@ set_subcommand_option (enum subcommand subcommand)
 {
   if (subcommand_option != UNKNOWN_SUBCOMMAND
       && subcommand_option != subcommand)
-    paxusage (_("You may not specify more than one '-Acdtrux',"
+    paxusage (_("You may not specify more than one '-Acdrtux',"
 		" '--delete' or  '--test-label' option"));
 
   subcommand_option = subcommand;
@@ -2890,7 +2890,7 @@ main (int argc, char **argv)
   switch (subcommand_option)
     {
     case UNKNOWN_SUBCOMMAND:
-      paxusage (_("You must specify one of the '-Acdtrux',"
+      paxusage (_("You must specify one of the '-Acdrtux',"
 		  " '--delete' or '--test-label' options"));
 
     case CAT_SUBCOMMAND:
