@@ -1905,6 +1905,7 @@ _gnu_flush_write (idx_t buffer_level)
     }
 
   map = bufmap_locate (status);
+  bool split_member = map && map->start * BLOCKSIZE <= status;
 
   if (status % BLOCKSIZE)
     {
@@ -1942,16 +1943,17 @@ _gnu_flush_write (idx_t buffer_level)
   if (volume_label_option)
     add_volume_label ();
 
-  if (map)
+  if (split_member)
     add_multi_volume_header (map);
 
   write_extended (true, &dummy, find_next_block ());
   tar_stat_destroy (&dummy);
 
-  if (map)
+  if (split_member)
     add_chunk_header (map);
   header = find_next_block ();
-  bufmap_reset (map, header - record_start);
+  bufmap_reset (map, (header - record_start
+		      - (split_member ? 0 : status >> LG_BLOCKSIZE)));
   bufsize = available_space_after (header);
   inhibit_map = false;
   while (bufsize < copy_size)

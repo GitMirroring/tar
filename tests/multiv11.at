@@ -1,0 +1,58 @@
+# Process this file with autom4te to create testsuite. -*- Autotest -*-
+# Test suite for GNU tar.
+# Copyright 2026 Free Software Foundation, Inc.
+#
+# GNU tar is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# GNU tar is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Description: If the previous volume ends on a file boundary,
+# i.e. the first thing in the next volume would be the next file's header,
+# an "M" header is output with the next file's size -
+# which is 512 too short because the next thing is the next file's tar header,
+# which in fact has the same size value.
+#
+# Reported by: David 'equinox' Lamparter <equinox-lists@diac24.net>
+# in <https://lists.gnu.org/r/bug-tar/2026-01/msg00012.html>.
+
+AT_SETUP([excess multivolume header])
+AT_KEYWORDS([multivolume multiv multiv11])
+
+AT_TAR_CHECK([
+set -e
+DIR=`pwd`
+
+cat >info.sh <<'EOF'
+#!/bin/sh
+printf '%s.%d\n' "$TAR_ARCHIVE" "$TAR_VOLUME" >&$TAR_FD
+EOF
+chmod u+x info.sh
+
+echo brokenfile >brokenfile
+echo nextfile >nextfile
+dd if=/dev/zero bs=$(( 4096 - 512 )) count=1 of=prevfile 2>/dev/null
+
+tar -F "$DIR/info.sh" --record-size=4k -L 4k -cf broken.tar \
+  prevfile brokenfile nextfile
+
+tar -tf broken.tar.2
+tar -Mtf broken.tar.2
+],
+[0],
+[brokenfile
+nextfile
+brokenfile
+nextfile
+],
+[],[],[],[gnu, oldgnu])
+
+AT_CLEANUP

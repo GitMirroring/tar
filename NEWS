@@ -1,4 +1,4 @@
-GNU tar NEWS - User visible changes. 2026-10-25
+GNU tar NEWS - User visible changes. 2026-11-22
 Please send GNU tar bug reports to <bug-tar@gnu.org>
 
 version 1.35.90 (git)
@@ -54,6 +54,12 @@ option.
 
 ** Support for RTU-style contiguous files has been withdrawn.
    RTU’s supplier dropped support for RTU decades ago.
+
+** tar -M no longer generates redundant M headers.
+   These headers were ambiguous at the start of a volume, as they did
+   not say whether the regular header had already been written in the
+   previous volume.  M headers are now generated only when needed,
+   i.e., when a member is split across volume boundaries.
 
 * Bug fixes
 

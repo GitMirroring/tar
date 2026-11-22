@@ -37,8 +37,8 @@ tar -tMR -f A.tar -f B.tar -f C.tar
 [Creating
 Testing
 block 0: a
-block 21: b
-block 43: ** Block of NULs **
+block 20: b
+block 42: ** Block of NULs **
 ],
 [Creating
 Testing
